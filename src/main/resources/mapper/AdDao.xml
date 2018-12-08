@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.scnu.dao.AdDao">
+
+	<insert id="insert">
+		insert into cm_ad(title, img_file_name, link, weight)
+		values(#{title}, #{imgFileName}, #{link}, #{weight})
+	</insert>
+	
+	<resultMap type="Ad" id="adMapper">
+		<id property="id" column="id"/>
+		<result property="imgFileName" column="img_file_name"/>
+	</resultMap>
+	
+	<select id="selectById" parameterType="Long" resultMap="adMapper">
+		select * from cm_ad where id=#{id}
+	</select>
+	
+	<select id="selectByPage" parameterType="Ad" resultMap="adMapper">
+		select * from cm_ad
+		<where>
+			<if test="title != null and title != ''">
+				title like "%"#{title}"%"
+			</if>
+			<if test="link != null and link != ''">
+				and link like "%"#{link}"%"
+			</if>
+		</where>
+		order by weight,id desc limit #{page.limitStart},#{page.pageNumber}
+	</select>
+	
+	<select id="selectCount" parameterType="Ad" resultType="Long">
+		select count(id) from cm_ad
+		<where>
+			<if test="title != null and title != ''">
+				title like "%"#{title}"%"
+			</if>
+			<if test="link != null and link != ''">
+				and link like "%"#{link}"%"
+			</if>
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="Long">
+		delete from cm_ad where id=#{id}
+	</delete>
+	
+	<update id="update" parameterType="Ad">
+		update cm_ad
+		<set>
+			<if test="title != null and title != ''">
+				title = #{title}
+			</if>
+			<if test="link != null and link != ''">
+				, link = #{link}
+			</if>
+			<if test="weight != null and weight != ''">
+				, weight = #{weight}
+			</if>
+			<if test="imgFileName != null and imgFileName != ''">
+				, img_file_name = #{imgFileName}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>
